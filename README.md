@@ -5,7 +5,7 @@
 	se placer dans le dossier dans lequel on veut placer le répertoire avec le terminal
 	lancer la commande : git clone https://github.com/LucasLefevre/INFO-H304.git
 
--configurer git
+- configurer git
 	git config --global user.email "you@example.com"
 	git config --global user.name "Your Name"
 

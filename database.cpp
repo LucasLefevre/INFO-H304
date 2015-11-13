@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <bitset>
+#include <algorithm>
 
 using namespace std;
 
@@ -10,12 +11,15 @@ Database::Database(string filename) {
 	cout << "Loading database\n";
 	this->filename = filename;
 	loadHeader(filename);
+	printInfos();
 	loadProteins(filename);
 	loadHeaders(filename);
-	printInfos();
+	
 	
 	proteins[0]->print();
 	proteins[1]->print();
+	
+	
 	
 }
 
@@ -40,12 +44,12 @@ void Database::loadHeader(const string &filename) {
 		//title lenght
 		char titleLengthB[4];
 		dbFile.read((char*)&titleLengthB, sizeof(titleLengthB));
-		int32_t titleLength = bytesToIntBigEndian(titleLengthB, 4);
+		titleLength = bytesToIntBigEndian(titleLengthB, 4);
 		
 		//title
 		char titleB[titleLength];  
 		dbFile.read((char*)&titleB, sizeof(titleB));
-		title = string(titleB);
+		title = string(titleB);//Bug : there are 3 weird characters at the end
 		
 		//timestamp length
 		char timestampLengthB[4];
@@ -53,8 +57,9 @@ void Database::loadHeader(const string &filename) {
 		timestampLength = bytesToIntBigEndian(timestampLengthB, 4);
 		
 		//timestamp
-		char timestamp[timestampLength];
-		dbFile.read((char*)&timestamp, sizeof(timestamp));
+		char timestampB[timestampLength];
+		dbFile.read((char*)&timestampB, sizeof(timestampB));
+		timestamp = string(timestampB);
 		
 		//number of sequences
 		char nbrSequencesB[4];
@@ -198,7 +203,7 @@ void Database::printInfos(std::ostream & out) {
 	out << " - Version : " <<  version << "\n";
 	out << " - Type : " << type  << "\n";
 	out << " - Title lenght : " << titleLength  << "\n";
-	out << " - Title : " << title  << "\n";
+	out << " - Title : " << title << "\n";
 	out << " - Timestamp Length : " <<  timestampLength  << "\n";
 	out << " - Timestamp : " << timestamp  << "\n";
 	out << " - Number of sequences : "  <<  nbrSequences << "\n";

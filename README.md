@@ -10,8 +10,7 @@
 	* git config --global user.name "Your Name"
 
 
-- commandes utiles : 
-- 
+- commandes utiles 
 	* git status : voir le status actuel, très très utile
 
 	* git commit : pour commiter, c-à-d créer une version du code qui pourra être uploadée sur le serveur.  Il ne faut donc jamais      commiter un code non fonctionnel.  Il est possible de revenr à n'importe quel commit à tout moment.

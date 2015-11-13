@@ -1,6 +1,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 #include "protein.h"
 
 
@@ -15,8 +16,10 @@ class Database {
 	
 		int32_t version;
 		int32_t type;
+		int32_t titleLength;
 		string title;
 		int32_t timestampLength;
+		string timestamp;
 		int32_t nbrSequences;
 		int32_t residueCount;
 		int32_t maxLength;
@@ -33,6 +36,7 @@ class Database {
 	public : 
 		Database(string dbName);
 		~Database();
+		void printInfos(std::ostream & out = std::cout);
 		void loadDb(const string dbName);
 };
 

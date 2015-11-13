@@ -1,4 +1,5 @@
 #include "protein.h"
+#include <map>
 
 
 using namespace std;
@@ -22,13 +23,59 @@ void Protein::setHeader(string header) {
 	this->header = header;
 }
 
-void Protein::print(iostream out) {
+string Protein::decode() {
+	
+	map<int, char> decodeTable;
+	
+	decodeTable[0] = '-';
+	decodeTable[1] = 'A';
+	decodeTable[2] = 'B';
+	decodeTable[3] = 'C';
+	decodeTable[4] = 'D';
+	decodeTable[5] = 'E';
+	decodeTable[6] = 'F';
+	decodeTable[7] = 'G';
+	decodeTable[8] = 'H';
+	decodeTable[9] = 'I';
+	decodeTable[27] = 'J';
+	decodeTable[10] = 'K';
+	decodeTable[11] = 'L';
+	decodeTable[12] = 'M';
+	decodeTable[13] = 'N';
+	decodeTable[26] = 'O';
+	decodeTable[14] = 'P';
+	decodeTable[15] = 'Q';
+	decodeTable[16] = 'R';
+	decodeTable[17] = 'S';
+	decodeTable[18] = 'T';
+	decodeTable[24] = 'U';
+	decodeTable[19] = 'V';
+	decodeTable[20] = 'W';
+	decodeTable[21] = 'X';
+	decodeTable[22] = 'Y';
+	decodeTable[23] = 'Z';
+	decodeTable[25] = '*';
+	
+	
+	
+	string decodedSequence = "";
+	
+	for (const auto & residue : sequence) {
+		decodedSequence += decodeTable[residue];
+	}
+	
+	return decodedSequence;
+}
+
+
+void Protein::print(ostream& out) {
+	
 	
 	if (!header.empty()) {
-		out << header << "\n";
+	
+		out << ">" << header << "\n";
 	}
-	for (auto residue : sequence) {
-		out << hex << (int) residue << "-";
-	}
-	out <<"\n";
+	
+	
+	out << decode() << "\n";
 }

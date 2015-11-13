@@ -12,6 +12,7 @@ Database::Database(string filename) {
 	loadHeader(filename);
 	loadProteins(filename);
 	loadHeaders(filename);
+	printInfos();
 	
 	proteins[0]->print();
 	proteins[1]->print();
@@ -89,19 +90,7 @@ void Database::loadHeader(const string &filename) {
 		dbFile.close();	
 
 		
-		cout << " - Version : " <<  version << "\n";
-		cout << " - Type : " << type  << "\n";
-		cout << " - Title lenght : " << titleLength  << "\n";
-		cout << " - Title : " << title  << "\n";
-		cout << " - Timestamp Length : " <<  timestampLength  << "\n";
-		cout << " - Timestamp : " << timestamp  << "\n";
-		cout << " - Number of sequences : "  <<  nbrSequences << "\n";
-		cout << " - Residue count : " <<  residueCount << "\n";
-		cout << " - Longuest sequence : " << maxLength << "\n";
-		cout << "offset : " << sequenceOffsets[0] << "\n";
-		cout << "offset : " << sequenceOffsets[1] << "\n";
-		cout << "offset : " << sequenceOffsets[2] << "\n";
-		cout << "offset : " << sequenceOffsets[3] << "\n";
+		
 		
 	}
 	else cout << "Unable to open database file : " << filename << ".pin\n";
@@ -165,9 +154,8 @@ void Database::loadHeaders(const string &filename) {
 				headerSize = headerOffsets[i+1] - headerOffsets[i];
 				char header[headerSize];
 				dbFile.read((char*) &header, headerSize);
-			
 				
-				proteins[i]->setHeader(string(header));
+				proteins[i]->setHeader(string(header).substr(7, string::npos));
 				
 				
 			}
@@ -204,6 +192,19 @@ int Database::bytesToIntBigEndian(char bytes[], int lenght) {
 		j++;
 	}
 	return res;
+}
+
+void Database::printInfos(std::ostream & out) {
+	out << " - Version : " <<  version << "\n";
+	out << " - Type : " << type  << "\n";
+	out << " - Title lenght : " << titleLength  << "\n";
+	out << " - Title : " << title  << "\n";
+	out << " - Timestamp Length : " <<  timestampLength  << "\n";
+	out << " - Timestamp : " << timestamp  << "\n";
+	out << " - Number of sequences : "  <<  nbrSequences << "\n";
+	out << " - Residue count : " <<  residueCount << "\n";
+	out << " - Longuest sequence : " << maxLength << "\n";
+		
 }
 
 

@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 
-using std::out;
+
 using std::string;
 using std::vector;
 
@@ -11,6 +11,8 @@ class Protein {
 	private :
 		vector<char> sequence;
 		string header;
+		
+		string decode();
 	
 	public :
 	
@@ -24,6 +26,6 @@ class Protein {
 		string getHeader();
 		void setHeader(string header);
 		
-		void print(iostream out = cout);
+		void print(std::ostream & out = std::cout);
 	
 };

@@ -25,7 +25,7 @@ class Database {
 		int32_t maxLength;
 		vector<int> headerOffsets;
 		vector<int> sequenceOffsets;
-		vector<Protein*> proteins;
+		vector<Protein> proteins;
 		
 		int bytesToIntBigEndian(char bytes[], int lenght);
 		int bytesToIntLittleEndian(char bytes[], int lenght);
@@ -38,6 +38,9 @@ class Database {
 		~Database();
 		void printInfos(std::ostream & out = std::cout);
 		void loadDb(const string dbName);
+		Protein & getProtein(int index);
+		bool contains(Protein protein); 
+		
 };
 
 

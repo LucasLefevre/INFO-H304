@@ -19,6 +19,10 @@ void Protein::setSequence(vector<char> sequence) {
 	this->sequence = sequence;
 }
 
+vector<char> Protein::getSequence() const {
+	return sequence;
+}
+
 void Protein::setHeader(string header) {
 	this->header = header;
 }
@@ -65,6 +69,10 @@ string Protein::decode() {
 	}
 	
 	return decodedSequence;
+}
+
+bool Protein::operator==(Protein const & a) {
+	return sequence == a.getSequence();
 }
 
 

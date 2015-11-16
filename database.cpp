@@ -16,8 +16,6 @@ Database::Database(string filename) {
 	loadHeaders(filename);
 	
 	
-	proteins[0]->print();
-	proteins[1]->print();
 	
 	
 	
@@ -122,12 +120,13 @@ void Database::loadProteins(const string &filename) {
 				char sequence[sequenceSize];
 				dbFile.read((char*) &sequence, sequenceSize);
 			
-				Protein* prot = new Protein();
+				Protein * prot = new Protein();
 				vector<char> sequenceVector(sequence, sequence + sequenceSize);
 				sequenceVector.pop_back(); //remove the null byte between sequences
+				
 				prot->setSequence(sequenceVector);
 				
-				proteins.push_back(prot);
+				proteins.push_back(*prot);
 			}
 		}
 		else cout << "Unable to open database file : " << filename << ".psq\n";
@@ -160,7 +159,7 @@ void Database::loadHeaders(const string &filename) {
 				char header[headerSize];
 				dbFile.read((char*) &header, headerSize);
 				
-				proteins[i]->setHeader(string(header).substr(7, string::npos));
+				proteins[i].setHeader(string(header).substr(7, string::npos));
 				
 				
 			}
@@ -198,6 +197,26 @@ int Database::bytesToIntBigEndian(char bytes[], int lenght) {
 	}
 	return res;
 }
+
+bool Database::contains(Protein protein) {
+	/*check if this database contains the protein passed as parameter*/
+	
+	for (Protein prot : proteins) {
+		if (prot == protein) {
+			return true;
+		}
+	}
+	return false;
+}
+
+Protein & Database::getProtein(int index) {
+	if (index < nbrSequences) {
+		return proteins[index];
+	}
+}
+
+
+
 
 void Database::printInfos(std::ostream & out) {
 	out << " - Version : " <<  version << "\n";

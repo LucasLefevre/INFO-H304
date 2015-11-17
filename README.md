@@ -2,6 +2,9 @@
 ## INSTALLATION ET CONFIGURATION
 - Installer git : sudo apt-get git
 
+- Se créer un compte sur Github et me donner le nom d'utilisateur pour que je vous ajoute avec les permissions de lecture/écriture 
+
+
 - Pour cloner le répertoire (avoir une version locale)  : 
 	* se placer dans le dossier dans lequel on veut placer le répertoire avec le terminal
 	* lancer la commande : git clone https://github.com/LucasLefevre/INFO-H304.git

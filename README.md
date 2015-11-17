@@ -21,6 +21,8 @@
 	*  ctrl + X
 	*  o (Oui)
 	*  Entrer nom d'utilisateur/mot de passe, normalement, c'est bon
+	ou
+- **git commit -m "message"** : idem sauf que le message est directement passé dans la commande.  Plus facile, mais ne permet pas les messages multilignes.
 		
 - **git add <fichier>** : à faire quand on crée un nouveau fichier pour l'indexer (ne pas indexer les fichiers exécutables et les .o).  A faire aussi quand on a modifié un fichier pour que la modification soit prise en compte pour le prochain commit.
 	

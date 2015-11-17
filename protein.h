@@ -20,12 +20,13 @@ class Protein {
 		Protein(vector<char> sequence, string header);
 		~Protein();
 		
-		vector<char> getSequence();
+		vector<char> getSequence() const;
 		void setSequence(vector<char> sequence);
 		
 		string getHeader();
 		void setHeader(string header);
 		
 		void print(std::ostream & out = std::cout);
+		bool operator==(Protein const & a);
 	
 };

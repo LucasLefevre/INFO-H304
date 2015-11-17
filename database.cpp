@@ -15,12 +15,6 @@ Database::Database(string filename) {
 	loadProteins(filename);
 	loadHeaders(filename);
 	
-	
-	proteins[0]->print();
-	proteins[1]->print();
-	
-	
-	
 }
 
 void Database::loadHeader(const string &filename) {
@@ -47,8 +41,10 @@ void Database::loadHeader(const string &filename) {
 		titleLength = bytesToIntBigEndian(titleLengthB, 4);
 		
 		//title
-		char titleB[titleLength];  
-		dbFile.read((char*)&titleB, sizeof(titleB));
+		char titleB[titleLength + 1];  
+		titleB[titleLength] = '\0';
+		dbFile.read((char*)&titleB, sizeof(titleB)-1);
+		
 		title = string(titleB);//Bug : there are 3 weird characters at the end
 		
 		//timestamp length
@@ -109,11 +105,43 @@ void Database::loadProteins(const string &filename) {
 		
 		ifstream dbFile;
 		dbFile.open(filename + ".psq", ios::binary | ios::in);
-		dbFile.seekg(1, ios::beg);
+		dbFile.seekg(0, ios::beg);
 		
 		if (dbFile.is_open()) {
 			
 			cout << "Loading proteins\n";
+			
+			
+			/*dbFile.seekg(1, ios::end);
+			size_t fileSize = dbFile.tellg();
+			
+
+			cout << fileSize << "\n";*/
+			
+			//char * bytes =  new char[fileSize];
+			
+							/*std::ifstream is("input.dat");
+							// Determine the file length
+							is.seekg(0, std:ios_base::end);
+							std::size_t size=is.tellg();
+							is.seekg(0, std::ios_base::begin);
+							// Create a vector to store the data
+							std::vector<float> v(size/sizeof(float));
+							// Load the data
+							is.read((char*) &v[0], size);*/
+							
+			/*vector<char> bytes(fileSize/sizeof(char));
+			dbFile.read((char*) &bytes[0], fileSize);
+		
+			cout << hex << (int) bytes[0];
+			cout << (int) bytes[1];
+			cout << (int) bytes[2];
+			cout << (int) bytes[3];
+			cout << (int) bytes[4];
+			cout << (int) bytes[5];
+			cout << (int) bytes[6];
+			cout << (int) bytes[7];*/
+
 			
 			int sequenceSize;
 			for (int i = 0; i <= nbrSequences-1 ; i++){  //nbrSequences + 1
@@ -122,13 +150,16 @@ void Database::loadProteins(const string &filename) {
 				char sequence[sequenceSize];
 				dbFile.read((char*) &sequence, sequenceSize);
 			
-				Protein* prot = new Protein();
+				Protein * prot = new Protein();
 				vector<char> sequenceVector(sequence, sequence + sequenceSize);
 				sequenceVector.pop_back(); //remove the null byte between sequences
+				
 				prot->setSequence(sequenceVector);
 				
-				proteins.push_back(prot);
+				proteins.push_back(*prot);
 			}
+			
+
 		}
 		else cout << "Unable to open database file : " << filename << ".psq\n";
 		
@@ -160,7 +191,7 @@ void Database::loadHeaders(const string &filename) {
 				char header[headerSize];
 				dbFile.read((char*) &header, headerSize);
 				
-				proteins[i]->setHeader(string(header).substr(7, string::npos));
+				proteins[i].setHeader(string(header).substr(7, string::npos));
 				
 				
 			}
@@ -198,6 +229,26 @@ int Database::bytesToIntBigEndian(char bytes[], int lenght) {
 	}
 	return res;
 }
+
+bool Database::contains(Protein protein) {
+	/*check if this database contains the protein passed as parameter*/
+	
+	for (Protein prot : proteins) {
+		if (prot == protein) {
+			return true;
+		}
+	}
+	return false;
+}
+
+Protein & Database::getProtein(int index) {
+	if (index < nbrSequences) {
+		return proteins[index];
+	}
+}
+
+
+
 
 void Database::printInfos(std::ostream & out) {
 	out << " - Version : " <<  version << "\n";

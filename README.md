@@ -2,7 +2,10 @@
 ## INSTALLATION ET CONFIGURATION
 - Installer git : sudo apt-get git
 
-- Pour cloner le répertoire (avoir une version locale)  : 
+- Se créer un compte sur Github et me donner le nom d'utilisateur pour que je vous ajoute avec les permissions de lecture/écriture 
+
+
+- Pour cloner le répertoire (avoir une version locale, sur votre ordinateur du code)  : 
 	* se placer dans le dossier dans lequel on veut placer le répertoire avec le terminal
 	* lancer la commande : git clone https://github.com/LucasLefevre/INFO-H304.git
 
@@ -18,12 +21,14 @@
 	*  ctrl + X
 	*  o (Oui)
 	*  Entrer nom d'utilisateur/mot de passe, normalement, c'est bon
+	ou
+- **git commit -m "message"** : idem sauf que le message est directement passé dans la commande.  Plus facile, mais ne permet pas les messages multilignes.
 		
-- **git add <fichier>** : à faire quand on crée un nouveau fichier pour l'indexer (ne pas indexer les fichiers exécutables et les .o)
+- **git add <fichier>** : à faire quand on crée un nouveau fichier pour l'indexer (ne pas indexer les fichiers exécutables et les .o).  A faire aussi quand on a modifié un fichier pour que la modification soit prise en compte pour le prochain commit.
 	
 - **git pull** : télécharge la dernière version depuis le serveur (ne peut se faire que si il n'y a plus rien à commiter localement = pas de changements non enregistrés)
 	
-- **git push** : envoie la dernière version locale (dernier commit) sur le serveur. Tant que ça n'a pas été fait, les autres ne voient pas le nouveau code vu qu'il n'est pas encore sur le serveur.  Si le serveur a une version plus récente que la version locale, il faudra "pull" la version du serveur et fusionner les deux (automatique si il n'y a pas de conflits) avant de pusher.
+- **git push** : envoie la dernière version locale (dernier commit) sur le serveur. Tant que ça n'a pas été fait, les autres ne voient pas le nouveau code vu qu'il n'est pas encore sur le serveur.  Si le serveur a une version plus récente que la version locale, il faudra *pull* la version du serveur et fusionner les deux (automatique si il n'y a pas de conflits) avant de *pusher*.
 	
 		
 	* En cas de problèmes, "git status" indique souvent des infos intéressante ;)

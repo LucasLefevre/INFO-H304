@@ -110,38 +110,7 @@ void Database::loadProteins(const string &filename) {
 		if (dbFile.is_open()) {
 			
 			cout << "Loading proteins\n";
-			
-			
-			/*dbFile.seekg(1, ios::end);
-			size_t fileSize = dbFile.tellg();
-			
-
-			cout << fileSize << "\n";*/
-			
-			//char * bytes =  new char[fileSize];
-			
-							/*std::ifstream is("input.dat");
-							// Determine the file length
-							is.seekg(0, std:ios_base::end);
-							std::size_t size=is.tellg();
-							is.seekg(0, std::ios_base::begin);
-							// Create a vector to store the data
-							std::vector<float> v(size/sizeof(float));
-							// Load the data
-							is.read((char*) &v[0], size);*/
-							
-			/*vector<char> bytes(fileSize/sizeof(char));
-			dbFile.read((char*) &bytes[0], fileSize);
-		
-			cout << hex << (int) bytes[0];
-			cout << (int) bytes[1];
-			cout << (int) bytes[2];
-			cout << (int) bytes[3];
-			cout << (int) bytes[4];
-			cout << (int) bytes[5];
-			cout << (int) bytes[6];
-			cout << (int) bytes[7];*/
-
+	
 			
 			int sequenceSize;
 			for (int i = 0; i <= nbrSequences-1 ; i++){  //nbrSequences + 1

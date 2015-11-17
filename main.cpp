@@ -11,7 +11,9 @@ int main(int argc, char* argv[]) {
 	
 	//test
 	cout << "looking for this potein in database : ";
+
 	Protein & prot = db->getProtein(549644);
+
 	prot.print();
 	
 	if (db->contains(prot)) {

@@ -160,7 +160,7 @@ void Database::loadHeaders(const string &filename) {
 				char header[headerSize];
 				dbFile.read((char*) &header, headerSize);
 				
-				proteins[i].setHeader(string(header).substr(7, string::npos));
+				proteins[i].setHeader(string(header).substr(8, string::npos));
 				
 				
 			}

@@ -66,6 +66,7 @@ string Protein::decode() {
 	
 	for (const auto & residue : sequence) {
 		decodedSequence += decodeTable[residue];
+		//cout << hex << "|" << (int) residue;
 	}
 	
 	return decodedSequence;

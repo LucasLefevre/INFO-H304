@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
 	//test
 	cout << "looking for this potein in database : ";
 
-	Protein & prot = db->getProtein(549644);
+	Protein & prot = db->getProtein(549645);
 
 	prot.print();
 	

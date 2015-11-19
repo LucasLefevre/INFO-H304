@@ -1,4 +1,5 @@
 #include "database.h"
+#include "scorematrix.h"
 #include <iostream>
 
 using namespace std;
@@ -6,11 +7,11 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-	Database* db = new Database("uniprot_sprot/uniprot_sprot.fasta");
+	//Database* db = new Database("uniprot_sprot/uniprot_sprot.fasta");
 	
 	
 	//test
-	cout << "looking for this potein in database : ";
+	/*cout << "looking for this potein in database : ";
 
 	Protein & prot = db->getProtein(549645);
 
@@ -18,7 +19,12 @@ int main(int argc, char* argv[]) {
 	
 	if (db->contains(prot)) {
 		cout << "Protein found ! \n";
-	}
+	}*/
+	
+	cout << "Loading score matrix\n";
+	
+	ScoreMatrix* blosum = new ScoreMatrix("BLOSUM62.txt");
+	blosum->print();
 	
 	return 0;
 

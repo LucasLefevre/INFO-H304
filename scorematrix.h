@@ -17,7 +17,8 @@ class ScoreMatrix {
 	public :
 	
 		ScoreMatrix();
-		ScoreMatrix(const string & filename);
+		ScoreMatrix(const string & filename, int nbrCols = 24);
 		int &operator()(int i, int j);
+		void print();
 	
 };

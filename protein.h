@@ -9,7 +9,7 @@ using std::vector;
 class Protein {
 	
 	private :
-		vector<char> sequence;
+		vector<unsigned int> sequence;
 		string header;
 		
 		string decode();
@@ -17,11 +17,11 @@ class Protein {
 	public :
 	
 		Protein();
-		Protein(vector<char> sequence, string header);
+		Protein(vector<unsigned int> sequence, string header);
 		~Protein();
 		
-		vector<char> getSequence() const;
-		void setSequence(vector<char> sequence);
+		vector<unsigned int> getSequence() const;
+		void setSequence(vector<unsigned int> sequence);
 		
 		string getHeader();
 		void setHeader(string header);

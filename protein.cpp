@@ -8,18 +8,18 @@ Protein::Protein() {
 	
 }
 
-Protein::Protein(vector<char> sequence, string header) {
+Protein::Protein(vector<unsigned int> sequence, string header) {
 	this->sequence = sequence;
 	this->header = header;
 }
 
 Protein::~Protein() {}
 
-void Protein::setSequence(vector<char> sequence) {
+void Protein::setSequence(vector<unsigned int> sequence) {
 	this->sequence = sequence;
 }
 
-vector<char> Protein::getSequence() const {
+vector<unsigned int> Protein::getSequence() const {
 	return sequence;
 }
 
@@ -29,7 +29,7 @@ void Protein::setHeader(string header) {
 
 string Protein::decode() {
 	
-	map<int, char> decodeTable;
+	map<unsigned int, char> decodeTable;
 	
 	decodeTable[0] = '-';
 	decodeTable[1] = 'A';

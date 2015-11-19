@@ -120,7 +120,7 @@ void Database::loadProteins(const string &filename) {
 				dbFile.read((char*) &sequence, sequenceSize);
 			
 				Protein * prot = new Protein();
-				vector<char> sequenceVector(sequence, sequence + sequenceSize);
+				vector<unsigned int> sequenceVector(sequence, sequence + sequenceSize);
 				sequenceVector.pop_back(); //remove the null byte between sequences
 				
 				prot->setSequence(sequenceVector);

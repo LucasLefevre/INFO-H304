@@ -1,4 +1,5 @@
 #include "scorematrix.h"
+#include "codeTable.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -11,32 +12,53 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 	file.open(filename);
 	this->nbrCols = nbrCols;
 	cout << "size of matrix : " << nbrCols << "\n";
-	matrix.assign(nbrCols * nbrCols, 0);
+	matrix.assign(27 * 27, -1000);
 	string line;
 	
+	CodeTable coder = CodeTable();
 	
 	if (file.is_open()) {
 		
 		int value;
-		
+		 
+		string residues = "";
 		int y = 0;
 		while (getline(file, line)) {
 			
-			if (line[0] == '#' || line[0] == ' ') {
+			if (line[0] == '#') {
+				continue;
+			}
+			else if (line[0] == ' ') {
+				//loading residues in the order of the score matrix file
+				stringstream converter;
+				converter << &line[1];
+				
+				
+				char residue;
+				while (converter >> residue) {
+					residues += residue;
+				}
+				cout << "res : " << residues << "\n";
 				continue;
 			}
 			int x = 0;
 			
-			
-			stringstream converter; 
+			cout << line << "\n";
+			stringstream converter;
 			converter << &line[1];
 			while (converter >> value){
 				
+				if (x < residues.size() && y < residues.size()) {
+					cout << residues.size() << "\n";
+					cout << "x : " << x << " (" << coder.encode(residues[x]) << ")" << " | y : " << y << " (" <<coder.encode(residues[y]) << ")"<< flush << "\n";
+					int residue_x = coder.encode(residues[x]); 
+					int residue_y = coder.encode(residues[y]); 
+					
+					this->operator()(residue_x, residue_y) = (int) value;
+
+					x++;
+				}
 				
-
-				this->operator()(x, y) = (int) value;
-
-				x++;
 			}
 			++y;
 		}
@@ -64,5 +86,6 @@ void ScoreMatrix::print() {
 		cout << matrix[i] << "|";
 	} 
 	//cout << "matrix : " << s << "\n";
+	cout << "\n";
 }
 

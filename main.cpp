@@ -25,6 +25,7 @@ int main(int argc, char* argv[]) {
 	
 	ScoreMatrix* blosum = new ScoreMatrix("BLOSUM62.txt");
 	blosum->print();
+	cout << blosum->operator()(20,20);
 	
 	return 0;
 

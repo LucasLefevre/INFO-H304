@@ -1,6 +1,6 @@
 # Projet d'INFO-H304
 ## INSTALLATION ET CONFIGURATION
-- Installer git : sudo apt-get git
+- Installer git : sudo apt-get install git
 
 - Se créer un compte sur Github et me donner le nom d'utilisateur pour que je vous ajoute avec les permissions de lecture/écriture 
 

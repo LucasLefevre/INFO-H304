@@ -19,6 +19,7 @@ class Protein {
 		Protein();
 		Protein(vector<unsigned int> sequence, string header);
 		~Protein();
+		void loadFromFile(const string filename);
 		
 		vector<unsigned int> getSequence() const;
 		void setSequence(vector<unsigned int> sequence);

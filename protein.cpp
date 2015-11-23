@@ -1,6 +1,9 @@
 #include "protein.h"
 #include "codeTable.h"
 #include <map>
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
 
 using namespace std;
@@ -18,6 +21,38 @@ Protein::~Protein() {}
 
 void Protein::setSequence(vector<unsigned int> sequence) {
 	this->sequence = sequence;
+}
+
+void Protein::loadFromFile(const string filename) {
+	ifstream file;
+	file.open(filename);
+	
+	CodeTable coder = CodeTable();
+	string line;
+	
+	if (file.is_open()) {
+		
+		
+		while (getline(file, line)) {
+			
+			if (line[0] == '>') {
+				header = line;
+			}
+			else {
+				
+				stringstream converter;
+				converter << &line[1];
+				char value;
+				while (converter >> value){
+					
+					sequence.push_back(coder.encode(value));
+				}
+			}
+		}
+	}
+	else {
+		cout << "Unable to open file : " << filename << "\n";
+	}
 }
 
 vector<unsigned int> Protein::getSequence() const {

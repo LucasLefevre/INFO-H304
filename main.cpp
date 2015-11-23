@@ -1,5 +1,6 @@
 #include "database.h"
 #include "scorematrix.h"
+//#include "protein.h"
 #include <iostream>
 
 using namespace std;
@@ -25,7 +26,11 @@ int main(int argc, char* argv[]) {
 	
 	ScoreMatrix* blosum = new ScoreMatrix("BLOSUM62.txt");
 	blosum->print();
-	cout << blosum->operator()(20,20);
+
+	
+	Protein prot;
+	prot.loadFromFile("P00533.fasta");
+	prot.print();
 	
 	return 0;
 

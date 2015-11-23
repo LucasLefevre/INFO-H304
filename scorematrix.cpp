@@ -11,29 +11,31 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 	file.open(filename);
 	this->nbrCols = nbrCols;
 	cout << "size of matrix : " << nbrCols << "\n";
-	matrix.resize(nbrCols * nbrCols);
+	matrix.assign(nbrCols * nbrCols, 0);
 	string line;
 	
 	
 	if (file.is_open()) {
+		
+		int value;
+		
+		int y = 0;
 		while (getline(file, line)) {
-			cout << "get line : " << line << "\n";
+			
 			if (line[0] == '#' || line[0] == ' ') {
 				continue;
 			}
-			
-			int value;
 			int x = 0;
-			int y = 0;
+			
 			
 			stringstream converter; 
 			converter << &line[1];
 			while (converter >> value){
 				
-				cout << "get value : " << value << "\n";
-				cout << "test1" << flush << "\n";
-				this->operator()(x, y) = value;
-				cout << "test2" << flush << "\n";
+				
+
+				this->operator()(x, y) = (int) value;
+
 				x++;
 			}
 			++y;
@@ -45,7 +47,6 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 	}
 	
 }
-
 
 
 int & ScoreMatrix::operator()(int i, int j) {

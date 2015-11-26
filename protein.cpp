@@ -41,7 +41,7 @@ void Protein::loadFromFile(const string filename) {
 			else {
 				
 				stringstream converter;
-				converter << &line[1];
+				converter << &line[0];
 				char value;
 				while (converter >> value){
 					
@@ -93,4 +93,8 @@ void Protein::print(ostream& out) {
 	
 	
 	out << decode() << "\n";
+}
+
+int Protein::size() {
+	return sequence.size();
 }

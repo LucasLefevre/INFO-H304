@@ -111,16 +111,20 @@ void Database::loadProteins(const string &filename) {
 			
 			cout << "Loading proteins\n";
 	
+			//char firstByte[1];
+			//dbFile.read((char*) &firstByte, sizeof(firstByte));
 			
 			int sequenceSize;
 			for (int i = 0; i <= nbrSequences-1 ; i++){  //nbrSequences + 1
 				
+				cout << "seq " << i << " | ";
 				sequenceSize = sequenceOffsets[i+1] - sequenceOffsets[i];
 				char sequence[sequenceSize];
 				dbFile.read((char*) &sequence, sequenceSize);
 			
 				Protein * prot = new Protein();
 				vector<unsigned int> sequenceVector(sequence, sequence + sequenceSize);
+				
 				sequenceVector.pop_back(); //remove the null byte between sequences
 				
 				prot->setSequence(sequenceVector);
@@ -160,7 +164,7 @@ void Database::loadHeaders(const string &filename) {
 				char header[headerSize];
 				dbFile.read((char*) &header, headerSize);
 				
-				proteins[i].setHeader(string(header).substr(8, string::npos));
+				proteins[i].setHeader(string(header).substr(7, string::npos));
 				
 				
 			}
@@ -202,6 +206,8 @@ int Database::bytesToIntBigEndian(char bytes[], int lenght) {
 bool Database::contains(Protein protein) {
 	/*check if this database contains the protein passed as parameter*/
 	
+	cout << "Looking for protein in DB\n";
+	protein.print();
 	for (Protein prot : proteins) {
 		if (prot == protein) {
 			return true;

@@ -88,16 +88,21 @@ bool Protein::operator==(Protein const & a) {
 }
 
 
-void Protein::print(ostream& out) {
+void Protein::print(string w, ostream& out) {
 	
 	
-	if (!header.empty()) {
-	
+	if (w == "header" && !header.empty()) {
 		out << ">" << header << "\n";
+	}
+	else if (w == "sequence") {
+		out << decode() << "\n";
+	}
+	else {
+		out << ">" << header << "\n";
+		out << decode() << "\n";
 	}
 	
 	
-	out << decode() << "\n";
 }
 
 int Protein::size() {

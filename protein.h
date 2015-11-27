@@ -30,7 +30,7 @@ class Protein {
 		
 		int size();
 		
-		void print(std::ostream & out = std::cout);
+		void print(string w = "all", std::ostream & out = std::cout);
 		bool operator==(Protein const & a);
 	
 };

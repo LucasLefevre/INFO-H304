@@ -23,12 +23,17 @@ void Protein::setSequence(vector<unsigned int> sequence) {
 	this->sequence = sequence;
 }
 
+unsigned int Protein::getResidue(int i) {
+	return sequence[i];
+}
 void Protein::loadFromFile(const string filename) {
 	ifstream file;
 	file.open(filename);
 	
 	CodeTable coder = CodeTable();
 	string line;
+	
+	sequence.push_back(0); //add a gap at the beginning
 	
 	if (file.is_open()) {
 		

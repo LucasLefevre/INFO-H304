@@ -117,7 +117,7 @@ void Database::loadProteins(const string &filename) {
 			int sequenceSize;
 			for (int i = 0; i <= nbrSequences-1 ; i++){  //nbrSequences + 1
 				
-				cout << "seq " << i << " | ";
+				
 				sequenceSize = sequenceOffsets[i+1] - sequenceOffsets[i];
 				char sequence[sequenceSize];
 				dbFile.read((char*) &sequence, sequenceSize);
@@ -125,7 +125,7 @@ void Database::loadProteins(const string &filename) {
 				Protein * prot = new Protein();
 				vector<unsigned int> sequenceVector(sequence, sequence + sequenceSize);
 				
-				sequenceVector.pop_back(); //remove the null byte between sequences
+				//sequenceVector.pop_back(); //remove the null byte between sequences
 				
 				prot->setSequence(sequenceVector);
 				
@@ -206,10 +206,11 @@ int Database::bytesToIntBigEndian(char bytes[], int lenght) {
 bool Database::contains(Protein protein) {
 	/*check if this database contains the protein passed as parameter*/
 	
-	cout << "Looking for protein in DB\n";
-	protein.print();
+	int i = -1;
 	for (Protein prot : proteins) {
+		i++;
 		if (prot == protein) {
+			cout << "protein d'index : " << i << endl; 
 			return true;
 		}
 	}

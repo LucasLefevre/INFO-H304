@@ -72,7 +72,7 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 
 int & ScoreMatrix::operator()(int i, int j) {
 	/*return element (i,j) of the matrix*/
-	cout << "accessing element (" << i <<", " << j << ")\n";
+	
 	return matrix[nbrCols * i + j]; 
 }
 

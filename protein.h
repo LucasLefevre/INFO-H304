@@ -26,6 +26,7 @@ class Protein {
 		
 		string getHeader();
 		void setHeader(string header);
+		unsigned int getResidue(int i);
 		
 		int size();
 		

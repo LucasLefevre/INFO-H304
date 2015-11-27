@@ -2,6 +2,7 @@
 #include "scorematrix.h"
 //#include "protein.h"
 #include <iostream>
+#include <utility>
 
 using namespace std;
 
@@ -23,7 +24,7 @@ int main(int argc, char* argv[]) {
 	Protein newProt;
 	newProt.loadFromFile("P00533.fasta");
 	cout << "Protein to test : " << endl;
-	newProt.print();
+	newProt.print("header");
 	
 	if (db->contains(newProt)) {
 		cout << "Protein found ! \n";
@@ -33,15 +34,17 @@ int main(int argc, char* argv[]) {
 	
 	//
 	
-	Protein prot = db->getProtein(113555); //this is the P00533 protein from the database
-	prot.print();
-	cout << "********************\n" << flush;
+	
 	
 	
 	//Algorithm
 	
-	//vector<pair<int, int>> results;
+	vector<pair<int, int>> results;
 	
+	int protIndex = 113555; //this is the P00533 protein from the database
+	Protein prot = db->getProtein(protIndex); 
+	prot.print("header");
+	cout << "********************\n" << flush;
 	
 	//init matrix with correct size and zeros
 	int openGapPenalty = -11;
@@ -92,6 +95,8 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	
+	pair<int, int> res(protIndex, score);
+	results.push_back(res);
 	cout << "Score : " << score << endl;
 
 	return 0;

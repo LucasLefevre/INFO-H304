@@ -11,7 +11,7 @@ int max_four(int a, int b, int c, int d) {
 }
 
 int gotoh(Protein & newProt, Protein & prot, ScoreMatrix & blosum) {
-	
+	//Gotoh algorithm with quadratic space complexity
 	
 	//init matrix with correct size and zeros
 	int openGapPenalty = -11;
@@ -61,6 +61,66 @@ int gotoh(Protein & newProt, Protein & prot, ScoreMatrix & blosum) {
 	}
 	
 	return score;
+}
+
+int gotohLinearSpace(Protein & newProt, Protein & prot, ScoreMatrix & blosum) {
+	//Gotoh algorithm with linear space complexity
+	
+	int openGapPenalty = -11;
+	int extensionGapPenalty = -1;
+	
+	unsigned int n; //length of the shortest sequence
+	unsigned int m; //length of the second sequence
+	unsigned int newProtSize = newProt.size();
+	unsigned int protSize = prot.size();
+	/*if (newProtSize < protSize) {
+		n = newProtSize;
+		m = protSize;
+	}
+	else {
+		
+	}*/
+	n = protSize;
+	m = newProtSize;
+	
+	
+	unsigned int CC[n];
+	unsigned int DD[n];
+	int e;
+	int c;
+	int s;
+	int t;
+	
+	CC[0] = 0;
+	t = openGapPenalty;
+	
+	for (int j = 1; j < n; j++) {
+		t = t + extensionGapPenalty;
+		CC[j] = t;
+		DD[j] = t + openGapPenalty;
+	}
+	
+	t = openGapPenalty;
+	
+	for (int i = 1; i < m; i++) {
+		
+		s = CC[0];
+		t = t + extensionGapPenalty;
+		c = t;
+		CC[0] = c;
+		e = t + openGapPenalty;
+		
+		for (int j = 1; j < n; j++) {
+			//cout << "(" << j << ", " << i << ") " << flush;
+			e = max(e + extensionGapPenalty, c + openGapPenalty);
+			DD[j] = max(DD[j] + extensionGapPenalty, CC[j] + openGapPenalty);
+			c = max_four(DD[j], e, s + blosum(prot.getResidue(j), newProt.getResidue(i)), 0);
+			s = CC[j];
+			CC[j] = c;
+		}
+	}
+	
+	return c;
 }
 
 int main(int argc, char* argv[]) {
@@ -147,9 +207,21 @@ int main(int argc, char* argv[]) {
 
 	
 	
-	/*Protein & prot = db.getProtein(11355);
-	int score = gotoh(newProt, prot, blosum);*/
-	 
+	Protein & prot = db.getProtein(1933);
+	
+	/*if (db.contains(prot)) {
+		cout << "Protein found ! \n";
+	}
+	cout << "********************\n" << flush;*/
+	
+	prot.print();
+	cout << "size : " << prot.size() << endl;
+	
+		
+	//int score = gotohLinearSpace(newProt, prot, blosum);
+	//cout << "Score : " << score  << endl;
+	
+	
 	
 	
 	
@@ -160,14 +232,22 @@ int main(int argc, char* argv[]) {
 	for (int i = 0; i < nbrSequences; i++) {
 		
 		Protein & prot = db.getProtein(i); 
+		//cout << i << " " << prot.size() <<"\n" << flush;
+		//prot.print();
+		//cout << "size : " << prot.size() << endl;
 		int score = gotoh(newProt, prot, blosum); 
-		cout << i << " | " ;
-		results.push_back(1);
+		//cout << i << \n" ;
+		results.push_back(score);
+		
+		if (i%1000 == 0) {
+			cout << i << endl;
+		}
+		
 	}
 	
 	
 	
-	cout << "Score : " << results[113555]  << endl;
+	//cout << "Score : " << results[113555]  << endl;
 
 	return 0;
 

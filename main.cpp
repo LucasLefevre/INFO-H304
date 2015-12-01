@@ -235,7 +235,7 @@ int main(int argc, char* argv[]) {
 		//cout << i << " " << prot.size() <<"\n" << flush;
 		//prot.print();
 		//cout << "size : " << prot.size() << endl;
-		int score = gotoh(newProt, prot, blosum); 
+		int score = gotohLinearSpace(newProt, prot, blosum); 
 		//cout << i << \n" ;
 		results.push_back(score);
 		

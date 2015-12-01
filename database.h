@@ -35,11 +35,12 @@ class Database {
 		
 	public : 
 		Database(string dbName);
-		~Database();
+		//~Database();
 		void printInfos(std::ostream & out = std::cout);
 		void loadDb(const string dbName);
 		Protein & getProtein(int index);
 		bool contains(Protein protein); 
+		int getNbrSequences();
 		
 };
 

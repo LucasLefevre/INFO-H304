@@ -239,6 +239,10 @@ void Database::printInfos(std::ostream & out) {
 		
 }
 
+int Database::getNbrSequences() {
+	return nbrSequences;
+}
+
 
 
 

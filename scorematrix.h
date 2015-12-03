@@ -18,7 +18,7 @@ class ScoreMatrix {
 	
 		ScoreMatrix();
 		ScoreMatrix(const string & filename, int nbrCols = 24);
-		int &operator()(int i, int j);
+		int &operator()(char i, char j);
 		void print();
 	
 };

@@ -12,18 +12,21 @@ Protein::Protein() {
 	
 }
 
-Protein::Protein(vector<unsigned int> sequence, string header) {
+Protein::Protein(char* sequence, int length, string header) {
+	this->length = length;
 	this->sequence = sequence;
 	this->header = header;
 }
 
 Protein::~Protein() {}
 
-void Protein::setSequence(vector<unsigned int> sequence) {
+void Protein::setSequence(char* sequence, int length) {
+	this->length = length;
 	this->sequence = sequence;
+	
 }
 
-unsigned int Protein::getResidue(int i) {
+char Protein::getResidue(int i) {
 	return sequence[i];
 }
 void Protein::loadFromFile(const string filename) {
@@ -33,7 +36,7 @@ void Protein::loadFromFile(const string filename) {
 	CodeTable coder = CodeTable();
 	string line;
 	
-	sequence.push_back(0); //add a gap at the beginning
+	
 	
 	if (file.is_open()) {
 		
@@ -50,17 +53,19 @@ void Protein::loadFromFile(const string filename) {
 				char value;
 				while (converter >> value){
 					
-					sequence.push_back(coder.encode(value));
+					//sequence.push_back(coder.encode(value));
 				}
 			}
 		}
+		
+		
 	}
 	else {
 		cout << "Unable to open file : " << filename << "\n";
 	}
 }
 
-vector<unsigned int> Protein::getSequence() const {
+char* Protein::getSequence() const {
 	return sequence;
 }
 
@@ -75,8 +80,8 @@ string Protein::decode() {
 	
 	string decodedSequence = "";
 	
-	for (const auto & residue : sequence) {
-		decodedSequence += coder.decode(residue);
+	for (int i = 0; i < length; i++) {
+		decodedSequence += coder.decode(sequence[i]);
 		//cout << hex << "|" << (int) residue;
 	}
 	
@@ -106,5 +111,5 @@ void Protein::print(string w, ostream& out) {
 }
 
 int Protein::size() {
-	return sequence.size();
+	return length;
 }

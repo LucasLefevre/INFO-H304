@@ -9,24 +9,25 @@ using std::vector;
 class Protein {
 	
 	private :
-		vector<unsigned int> sequence;
+		char* sequence;
 		string header;
+		int length;
 		
 		string decode();
 	
 	public :
 	
 		Protein();
-		Protein(vector<unsigned int> sequence, string header);
+		Protein(char* sequence, int length, string header);
 		~Protein();
 		void loadFromFile(const string filename);
 		
-		vector<unsigned int> getSequence() const;
-		void setSequence(vector<unsigned int> sequence);
+		char* getSequence() const;
+		void setSequence(char* sequence, int length);
 		
 		string getHeader();
 		void setHeader(string header);
-		unsigned int getResidue(int i);
+		char getResidue(int i);
 		
 		int size();
 		

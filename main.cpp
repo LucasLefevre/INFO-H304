@@ -1,5 +1,6 @@
 #include "database.h"
 #include "scorematrix.h"
+#include <algorithm>
 //#include "protein.h"
 #include <iostream>
 #include <utility>
@@ -112,8 +113,8 @@ int gotohLinearSpace(Protein & newProt, Protein & prot, ScoreMatrix & blosum) {
 		
 		for (int j = 1; j < n; j++) {
 			//cout << "(" << j << ", " << i << ") " << flush;
-			e = max(e + extensionGapPenalty, c + openGapPenalty);
-			DD[j] = max(DD[j] + extensionGapPenalty, CC[j] + openGapPenalty);
+			e = max(e, c + openGapPenalty) + extensionGapPenalty;
+			DD[j] = max(DD[j], CC[j] + openGapPenalty) + extensionGapPenalty;
 			c = max_four(DD[j], e, s + blosum(prot.getResidue(j), newProt.getResidue(i)), 0);
 			s = CC[j];
 			CC[j] = c;
@@ -145,65 +146,10 @@ int main(int argc, char* argv[]) {
 	//
 	
 	
-	
-	
-	//Algorithm
-	
-	
-	
-	//init matrix with correct size and zeros
-	/*int openGapPenalty = -11;
-	int extensionGapPenalty = -1;
-	
-	int nbrColumns = newProt.size(); 
-	int nbrLines =  prot.size();
-	
-	cout << "nbrLines : " << nbrLines << " | nbrColumns : " << nbrColumns << endl;
-	
-	vector<vector<int>> D (nbrLines, vector<int>(nbrColumns)); //distance matrix
-	
-	vector<vector<int>> P (nbrLines, vector<int>(nbrLines)); 
-	vector<vector<int>> Q (nbrLines, vector<int>(nbrColumns)); 
-
-	int score = 0;
-	
-	for (int i = 0; i < nbrLines; i++) {
-		D[i][0] = 0;
-		P[i][0] = 0;
-		Q[i][0] = 0;
-	}
-	
-	for (int i = 0; i < nbrColumns; i++) {
-		D[0][i] = 0;
-		P[0][i] = 0;
-		Q[0][i] = 0;
-	}
-	
-	for (int i = 1; i < nbrLines; i++) {
-		for (int j = 1; j < nbrColumns; j++) {
-			
-			//cout << i << "|" << j <<endl;
-			P[i][j] = max(D[i-1][j] + openGapPenalty, P[i-1][j] + extensionGapPenalty);
-			Q[i][j] = max(D[i][j-1] + openGapPenalty, P[i][j-1] + extensionGapPenalty);
-			
-			D[i][j] = max_four(
-						0,
-						D[i-1][j-1] + (*blosum)(prot.getResidue(i), newProt.getResidue(j)),
-						P[i][j],
-						Q[i][j]
-			);
-			
-			if (D[i][j] > score) {
-				score = D[i][j];
-			} 
-			
-		}
-	}*/
-	
-	Protein newProt;
-	newProt.loadFromFile("P00533.fasta");
+	Protein newProt = db.getProtein(113555);
+	//newProt.loadFromFile("P00533.fasta");
 	cout << "Protein to test : " << endl;
-	newProt.print("header");
+	newProt.print();
 
 	
 	
@@ -214,8 +160,8 @@ int main(int argc, char* argv[]) {
 	}
 	cout << "********************\n" << flush;*/
 	
-	prot.print();
-	cout << "size : " << prot.size() << endl;
+	//prot.print();
+	//cout << "size : " << prot.size() << endl;
 	
 		
 	//int score = gotohLinearSpace(newProt, prot, blosum);
@@ -226,7 +172,7 @@ int main(int argc, char* argv[]) {
 	
 	
 	int nbrSequences = db.getNbrSequences();
-	vector<int> results;
+	vector<pair<int, int>> results;
 	results.reserve(nbrSequences);
 	
 	for (int i = 0; i < nbrSequences; i++) {
@@ -237,7 +183,9 @@ int main(int argc, char* argv[]) {
 		//cout << "size : " << prot.size() << endl;
 		int score = gotohLinearSpace(newProt, prot, blosum); 
 		//cout << i << \n" ;
-		results.push_back(score);
+		
+		pair<int, int> res (i, score);
+		results.push_back(res);
 		
 		if (i%1000 == 0) {
 			cout << i << endl;
@@ -245,6 +193,17 @@ int main(int argc, char* argv[]) {
 		
 	}
 	
+	
+	
+	sort(results.begin(), results.end(), [](pair<int, int> &left, pair<int, int> &right) {
+		return left.second > right.second;
+	});
+	
+	for (int i = 0; i < 100; i++) {
+		Protein & prot = db.getProtein(results[i].first); 
+		cout << "Score : " << results[i].second << " ";
+		prot.print("header");
+	}
 	
 	
 	//cout << "Score : " << results[113555]  << endl;

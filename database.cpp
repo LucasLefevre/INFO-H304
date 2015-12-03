@@ -119,15 +119,14 @@ void Database::loadProteins(const string &filename) {
 				
 				
 				sequenceSize = sequenceOffsets[i+1] - sequenceOffsets[i];
-				char sequence[sequenceSize];
-				dbFile.read((char*) &sequence, sequenceSize);
-			
+				char* sequence = new char[sequenceSize];
+				dbFile.read(sequence, sequenceSize);
 				Protein * prot = new Protein();
-				vector<unsigned int> sequenceVector(sequence, sequence + sequenceSize);
+				//vector<char> sequenceVector(sequence, sequence + sequenceSize);
 				
 				//sequenceVector.pop_back(); //remove the null byte between sequences
 				
-				prot->setSequence(sequenceVector);
+				prot->setSequence(sequence, sequenceSize);
 				
 				proteins.push_back(*prot);
 			}

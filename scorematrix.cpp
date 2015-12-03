@@ -70,7 +70,7 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 }
 
 
-int & ScoreMatrix::operator()(int i, int j) {
+int & ScoreMatrix::operator()(char i, char j) {
 	/*return element (i,j) of the matrix*/
 	
 	return matrix[nbrCols * i + j]; 

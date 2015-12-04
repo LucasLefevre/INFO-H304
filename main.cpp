@@ -1,7 +1,6 @@
 #include "database.h"
 #include "scorematrix.h"
 #include <algorithm>
-//#include "protein.h"
 #include <iostream>
 #include <utility>
 #include <thread>
@@ -9,22 +8,20 @@
 using namespace std;
 
 int max_four(int a, int b, int c, int d) {
+	//return the max of four integer
 	return max(max(a,b), max(c,d));
 }
 
 vector<int> bounds(int parts, int size) {
-	
+	//separate the sequences in equal parts in order to give the parts to different threads
 	int rest = size % parts;
 	int larger = (size - rest)/parts;
-	cout << "larger : " << larger << endl; 
-	cout << "rest : " << rest << endl;
 	vector<int> res;
 	
-	
 	for (int i = 0; i <= parts; i++) {
-		res.push_back(i*larger);
-		cout << "i : " << res[i] << endl; 
+		res.push_back(i*larger);	
 	}
+	
 	res[parts-1] += rest; 
 	
 	return res;
@@ -145,19 +142,17 @@ int gotohLinearSpace(const Protein & newProt, const Protein & prot, ScoreMatrix 
 	
 }
 void computeGotoh(Database & db, ScoreMatrix & blosum,  Protein & newProt, vector<pair<int, int>> & results, int begin, int end) {
+	
+	
 	for (int i = begin; i < end; i++) {
 	
-		Protein & prot = db.getProtein(i); 
-		//cout << i << " " << prot.size() <<"\n" << flush;
-		//prot.print();
-		//cout << "size : " << prot.size() << endl;
-		int score = gotohLinearSpace(newProt, prot, blosum); 
-		//cout << i << \n" ;
+		Protein & prot = db.getProtein(i); //get protein i from database
+		int score = gotohLinearSpace(newProt, prot, blosum); //compute its score
 		
 		pair<int, int> res (i, score);
-		results[i] = res;
+		results[i] = res; //store the score associated with protein 'i' in the results vector 
 		
-		if (i%1000 == 0) {
+		if (i%1000 == 0) { //print progress
 			cout << begin << " " << i << endl;
 		}
 	}
@@ -168,46 +163,18 @@ void computeGotoh(Database & db, ScoreMatrix & blosum,  Protein & newProt, vecto
 
 int main(int argc, char* argv[]) {
 
+	//load the database
 	Database db = Database("uniprot_sprot/uniprot_sprot.fasta");
 	
-	
 	cout << "Loading score matrix\n";
-	
 	ScoreMatrix blosum = ScoreMatrix("BLOSUM62.txt");
-	//blosum->print();
-
 	
 	
-	
-	
-	
-	
-	//
-	
-	
+	//load the protein to align
 	Protein newProt;
 	newProt.loadFromFile("P00533.fasta");
-	if (db.contains(newProt)) {
-		cout << "Protein found ! \n";
-	}
-	cout << "********************\n" << flush;
-	
-	
-	cout << "Protein to test : " << endl;
+	cout << "Protein to align : " << endl;
 	newProt.print();
-
-	//cout << "dsfsé" << endl << flush;
-	
-	/*Protein & prot = db.getProtein(1933);
-	
-	if (db.contains(prot)) {
-		cout << "Protein found ! \n";
-	}*/
-	cout << "********************\n" << flush;
-	
-	//prot.print();
-	//cout << "size : " << prot.size() << endl;
-	
 		
 	//int score = gotohLinearSpace(newProt, prot, blosum);
 	//cout << "Score : " << score  << endl;
@@ -217,32 +184,33 @@ int main(int argc, char* argv[]) {
 	
 	
 	int nbrSequences = db.getNbrSequences();
-	vector<pair<int, int>> results;
+	
+	vector<pair<int, int>> results; //vector with the results of Gotoh algorithm : pair<index of protein in database, score>
 	results.resize(nbrSequences);
 	
-	int nbrThreads = thread::hardware_concurrency();
+	int nbrThreads = thread::hardware_concurrency(); //get the number of hardware thread available on the machine
 	cout << "Running on " << nbrThreads << " threads\n";
 	
-	vector<int> bnd = bounds(nbrThreads, nbrSequences);  
+	vector<int> bnd = bounds(nbrThreads, nbrSequences);  //vector with indexes of proteins, we give the proteins between to indexes (bnd[i] and bnd[i+1]) to one thread
 	
-	thread * threads = new thread[nbrThreads];
+	thread * threads = new thread[nbrThreads]; //array that holds the threats
 	
 	//creating threads
 	for(int i = 0; i < nbrThreads; i++) {
 		threads[i] = thread(computeGotoh, ref(db), ref(blosum), ref(newProt), ref(results), bnd[i], bnd[i+1]);
 	} 
 	
-	//joining the threads (wait)
+	//joining the threads (we wait that all threads are finished)
 	for(int i = 0; i < nbrThreads; i++) {
 		threads[i].join();
 	}
 	
 	
-	sort(results.begin(), results.end(), [](pair<int, int> &left, pair<int, int> &right) {
+	sort(results.begin(), results.end(), [](pair<int, int> &left, pair<int, int> &right) {  //sort the vector of results based on score
 		return left.second > right.second;
 	});
 	
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 10; i++) { // print the first sequence with highest score
 		Protein & prot = db.getProtein(results[i].first); 
 		cout << "Score : " << results[i].second << " ";
 		prot.print("header");

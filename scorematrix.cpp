@@ -48,8 +48,7 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 			while (converter >> value){
 				
 				if (x < residues.size() && y < residues.size()) {
-					//cout << residues.size() << "\n";
-					//cout << "x : " << x << " (" << coder.encode(residues[x]) << ")" << " | y : " << y << " (" <<coder.encode(residues[y]) << ")"<< flush << "\n";
+					
 					int residue_x = coder.encode(residues[x]); 
 					int residue_y = coder.encode(residues[y]); 
 					
@@ -71,7 +70,7 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 
 
 int & ScoreMatrix::operator()(char i, char j) {
-	/*return element (i,j) of the matrix*/
+	//return element (i,j) of the matrix
 	
 	return matrix[nbrCols * i + j]; 
 }

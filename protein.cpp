@@ -30,6 +30,8 @@ const char Protein::getResidue(int i) const {
 	return sequence[i];
 }
 void Protein::loadFromFile(const string filename) {
+	//load the header and the sequence of a protein from a fasta file containing only one protein
+	
 	ifstream file;
 	file.open(filename);
 	
@@ -40,7 +42,6 @@ void Protein::loadFromFile(const string filename) {
 	
 	
 	if (file.is_open()) {
-		
 		
 		while (getline(file, line)) {
 			
@@ -85,7 +86,7 @@ void Protein::setHeader(string header) {
 }
 
 string Protein::decode() {
-	
+	//return a sequence string in readable format (letters instead of binary)
 	
 	CodeTable coder = CodeTable();
 	
@@ -100,6 +101,8 @@ string Protein::decode() {
 }
 
 bool Protein::operator==(Protein const & a) {
+	//define the == operator for Protein --> we can do : proteinA == proteinB
+	//two proteins are equal if they have the same sequence
 	return sequence == a.getSequence();
 }
 
@@ -122,5 +125,6 @@ void Protein::print(string w, ostream& out) {
 }
 
 const int Protein::size() const {
+	//return the lenght of the sequence
 	return length;
 }

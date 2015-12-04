@@ -4,11 +4,31 @@
 //#include "protein.h"
 #include <iostream>
 #include <utility>
+#include <thread>
 
 using namespace std;
 
 int max_four(int a, int b, int c, int d) {
 	return max(max(a,b), max(c,d));
+}
+
+vector<int> bounds(int parts, int size) {
+	
+	int rest = size % parts;
+	int larger = (size - rest)/parts;
+	cout << "larger : " << larger << endl; 
+	cout << "rest : " << rest << endl;
+	vector<int> res;
+	
+	
+	for (int i = 0; i <= parts; i++) {
+		res.push_back(i*larger);
+		cout << "i : " << res[i] << endl; 
+	}
+	res[parts-1] += rest; 
+	
+	return res;
+	
 }
 
 int gotoh(Protein & newProt, Protein & prot, ScoreMatrix & blosum) {
@@ -122,7 +142,29 @@ int gotohLinearSpace(Protein & newProt, Protein & prot, ScoreMatrix & blosum) {
 	}
 	
 	return c;
+	
 }
+void computeGotoh(Database & db, ScoreMatrix & blosum,  Protein & newProt, vector<pair<int, int>> & results, int begin, int end) {
+	for (int i = begin; i < end; i++) {
+	
+		Protein & prot = db.getProtein(i); 
+		//cout << i << " " << prot.size() <<"\n" << flush;
+		//prot.print();
+		//cout << "size : " << prot.size() << endl;
+		int score = gotohLinearSpace(newProt, prot, blosum); 
+		//cout << i << \n" ;
+		
+		pair<int, int> res (i, score);
+		results[i] = res;
+		
+		if (i%1000 == 0) {
+			cout << begin << " " << i << endl;
+		}
+	}
+	
+	
+}
+
 
 int main(int argc, char* argv[]) {
 
@@ -137,28 +179,31 @@ int main(int argc, char* argv[]) {
 	
 	
 	
-	/*if (db->contains(newProt)) {
-		cout << "Protein found ! \n";
-	}
-	cout << "********************\n" << flush;*/
+	
 	
 	
 	//
 	
 	
-	Protein newProt = db.getProtein(113555);
-	//newProt.loadFromFile("P00533.fasta");
+	Protein newProt;
+	newProt.loadFromFile("P00533.fasta");
+	if (db.contains(newProt)) {
+		cout << "Protein found ! \n";
+	}
+	cout << "********************\n" << flush;
+	
+	
 	cout << "Protein to test : " << endl;
 	newProt.print();
 
+	//cout << "dsfsé" << endl << flush;
 	
+	/*Protein & prot = db.getProtein(1933);
 	
-	Protein & prot = db.getProtein(1933);
-	
-	/*if (db.contains(prot)) {
+	if (db.contains(prot)) {
 		cout << "Protein found ! \n";
-	}
-	cout << "********************\n" << flush;*/
+	}*/
+	cout << "********************\n" << flush;
 	
 	//prot.print();
 	//cout << "size : " << prot.size() << endl;
@@ -173,33 +218,31 @@ int main(int argc, char* argv[]) {
 	
 	int nbrSequences = db.getNbrSequences();
 	vector<pair<int, int>> results;
-	results.reserve(nbrSequences);
+	results.resize(nbrSequences);
 	
-	for (int i = 0; i < nbrSequences; i++) {
-		
-		Protein & prot = db.getProtein(i); 
-		//cout << i << " " << prot.size() <<"\n" << flush;
-		//prot.print();
-		//cout << "size : " << prot.size() << endl;
-		int score = gotohLinearSpace(newProt, prot, blosum); 
-		//cout << i << \n" ;
-		
-		pair<int, int> res (i, score);
-		results.push_back(res);
-		
-		if (i%1000 == 0) {
-			cout << i << endl;
-		}
-		
+	int nbrThreads = thread::hardware_concurrency();
+	cout << "Running on " << nbrThreads << " threads\n";
+	
+	vector<int> bnd = bounds(nbrThreads, nbrSequences);  
+	
+	thread * threads = new thread[nbrThreads];
+	
+	//creating threads
+	for(int i = 0; i < nbrThreads; i++) {
+		threads[i] = thread(computeGotoh, ref(db), ref(blosum), ref(newProt), ref(results), bnd[i], bnd[i+1]);
+	} 
+	
+	//joining the threads (wait)
+	for(int i = 0; i < nbrThreads; i++) {
+		threads[i].join();
 	}
-	
 	
 	
 	sort(results.begin(), results.end(), [](pair<int, int> &left, pair<int, int> &right) {
 		return left.second > right.second;
 	});
 	
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 10; i++) {
 		Protein & prot = db.getProtein(results[i].first); 
 		cout << "Score : " << results[i].second << " ";
 		prot.print("header");

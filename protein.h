@@ -27,9 +27,9 @@ class Protein {
 		
 		string getHeader();
 		void setHeader(string header);
-		char getResidue(int i);
+		const char getResidue(int i) const;
 		
-		int size();
+		const int size() const;
 		
 		void print(string w = "all", std::ostream & out = std::cout);
 		bool operator==(Protein const & a);

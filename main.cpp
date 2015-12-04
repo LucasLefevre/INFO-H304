@@ -84,16 +84,16 @@ int gotoh(Protein & newProt, Protein & prot, ScoreMatrix & blosum) {
 	return score;
 }
 
-int gotohLinearSpace(Protein & newProt, Protein & prot, ScoreMatrix & blosum) {
+int gotohLinearSpace(const Protein & newProt, const Protein & prot, ScoreMatrix & blosum) {
 	//Gotoh algorithm with linear space complexity
 	
-	int openGapPenalty = -11;
-	int extensionGapPenalty = -1;
+	const int openGapPenalty = -11;
+	const int extensionGapPenalty = -1;
 	
 	unsigned int n; //length of the shortest sequence
 	unsigned int m; //length of the second sequence
-	unsigned int newProtSize = newProt.size();
-	unsigned int protSize = prot.size();
+	const unsigned int newProtSize = newProt.size();
+	const unsigned int protSize = prot.size();
 	/*if (newProtSize < protSize) {
 		n = newProtSize;
 		m = protSize;

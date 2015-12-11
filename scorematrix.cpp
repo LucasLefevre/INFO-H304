@@ -82,6 +82,9 @@ void ScoreMatrix::print() {
 	
 	string s;
 	for (int i = 0; i< matrix.size(); i++) {
+		if (i % nbrCols == 0) {
+			cout << endl;
+		}
 		cout << matrix[i] << "|";
 	} 
 	//cout << "matrix : " << s << "\n";

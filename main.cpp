@@ -1,9 +1,10 @@
 #include "database.h"
 #include "scorematrix.h"
+#include "threadpool.h"
 #include <algorithm>
 #include <iostream>
 #include <utility>
-#include <thread>
+
 
 using namespace std;
 
@@ -12,68 +13,69 @@ int max_four(int a, int b, int c, int d) {
 	return max(max(a,b), max(c,d));
 }
 
-vector<int> bounds(int parts, int size) {
-	//separate the sequences in equal parts in order to give the parts to different threads
-	int rest = size % parts;
-	int larger = (size - rest)/parts;
-	vector<int> res;
+
+int gotoh(const Protein & newProt, const Protein & prot, ScoreMatrix & blosum) {
 	
-	for (int i = 0; i <= parts; i++) {
-		res.push_back(i*larger);	
+	
+	unsigned int n; //length of the shortest sequence
+	unsigned int m; //length of the second sequence
+	
+	const unsigned int newProtSize = newProt.size();
+	const unsigned int protSize = prot.size();
+	
+	Protein shorterProt;
+	Protein longerProt;
+	if (newProtSize < protSize) {
+		n = newProtSize;
+		m = protSize;
+		shorterProt = newProt;
+		longerProt = prot;
+		
+	}
+	else {
+		n = protSize;
+		m = newProtSize;
+		shorterProt = prot;
+		longerProt = newProt;
 	}
 	
-	res[parts-1] += rest; 
 	
-	return res;
+	int H[n+1];
+	int F[n+1];
 	
-}
-
-int gotoh(Protein & newProt, Protein & prot, ScoreMatrix & blosum) {
-	//Gotoh algorithm with quadratic space complexity
+	int R = 1;
+	int Q = 12;
+	int H_diag;
+	int H_diag_temp;
+	int E;
 	
-	//init matrix with correct size and zeros
-	int openGapPenalty = -11;
-	int extensionGapPenalty = -1;
-	
-	int nbrColumns = newProt.size(); 
-	int nbrLines =  prot.size();
-	
-	vector<vector<int>> D (nbrLines, vector<int>(nbrColumns)); 
-	
-	vector<vector<int>> P (nbrLines, vector<int>(nbrColumns)); 
-	vector<vector<int>> Q (nbrLines, vector<int>(nbrColumns)); 
-
 	int score = 0;
 	
-	/*for (int i = 0; i < nbrLines; i++) {
-		D[i][0] = 0;
-		P[i][0] = 0;
-		Q[i][0] = 0;
+	for (int j = 0; j <= n; j++) {
+		H[j] = 0;
+		F[j] = 0;
 	}
 	
-	for (int i = 0; i < nbrColumns; i++) {
-		D[0][i] = 0;
-		P[0][i] = 0;
-		Q[0][i] = 0;
-	}*/
 	
-	for (int i = 1; i < nbrLines; i++) {
-		for (int j = 1; j < nbrColumns; j++) {
+	for (int i = 1; i <= m; i++) { //line
+		
+		E = 0;
+		H_diag = 0;
+		
+		for (int j = 1; j <= n; j++) { //column
+		
+		
+			E = max(H[j-1] - Q,  E - R);  
+			F[j] = max(H[j] - Q, F[j] - R);
 			
-			//cout << i << "|" << j <<endl;
-			P[i][j] = max(D[i-1][j] + openGapPenalty, P[i-1][j] + extensionGapPenalty);
-			Q[i][j] = max(D[i][j-1] + openGapPenalty, P[i][j-1] + extensionGapPenalty);
+			H_diag_temp = H[j];
 			
-			D[i][j] = max_four(
-						0,
-						D[i-1][j-1] + blosum(prot.getResidue(i), newProt.getResidue(j)),
-						P[i][j],
-						Q[i][j]
-			);
+			H[j] = max_four(H_diag + blosum(shorterProt.getResidue(j-1), longerProt.getResidue(i-1)) , E, F[j], 0);
+				
+			H_diag = H_diag_temp;
 			
-			if (D[i][j] > score) {
-				score = D[i][j];
-			} 
+			if (H[j] > score)
+				score = H[j];
 			
 		}
 	}
@@ -81,82 +83,18 @@ int gotoh(Protein & newProt, Protein & prot, ScoreMatrix & blosum) {
 	return score;
 }
 
-int gotohLinearSpace(const Protein & newProt, const Protein & prot, ScoreMatrix & blosum) {
-	//Gotoh algorithm with linear space complexity
-	
-	const int openGapPenalty = -11;
-	const int extensionGapPenalty = -1;
-	
-	unsigned int n; //length of the shortest sequence
-	unsigned int m; //length of the second sequence
-	const unsigned int newProtSize = newProt.size();
-	const unsigned int protSize = prot.size();
-	/*if (newProtSize < protSize) {
-		n = newProtSize;
-		m = protSize;
-	}
-	else {
-		
-	}*/
-	n = protSize;
-	m = newProtSize;
+void computeGotoh(Database & db, ScoreMatrix & blosum,  Protein & newProt, vector<pair<int, int>> & results, int protIndex) {
 	
 	
-	unsigned int CC[n];
-	unsigned int DD[n];
-	int e;
-	int c;
-	int s;
-	int t;
-	
-	CC[0] = 0;
-	t = openGapPenalty;
-	
-	for (int j = 1; j < n; j++) {
-		t = t + extensionGapPenalty;
-		CC[j] = t;
-		DD[j] = t + openGapPenalty;
+	if (protIndex % 1000 == 0) {
+		cout << "Computing score for protein : " << protIndex << endl;
 	}
 	
-	t = openGapPenalty;
+	Protein & prot = db.getProtein(protIndex); //get protein i from database
+	int score = gotoh(newProt, prot, blosum); //compute its score
 	
-	for (int i = 1; i < m; i++) {
-		
-		s = CC[0];
-		t = t + extensionGapPenalty;
-		c = t;
-		CC[0] = c;
-		e = t + openGapPenalty;
-		
-		for (int j = 1; j < n; j++) {
-			//cout << "(" << j << ", " << i << ") " << flush;
-			e = max(e, c + openGapPenalty) + extensionGapPenalty;
-			DD[j] = max(DD[j], CC[j] + openGapPenalty) + extensionGapPenalty;
-			c = max_four(DD[j], e, s + blosum(prot.getResidue(j), newProt.getResidue(i)), 0);
-			s = CC[j];
-			CC[j] = c;
-		}
-	}
-	
-	return c;
-	
-}
-void computeGotoh(Database & db, ScoreMatrix & blosum,  Protein & newProt, vector<pair<int, int>> & results, int begin, int end) {
-	
-	
-	for (int i = begin; i < end; i++) {
-	
-		Protein & prot = db.getProtein(i); //get protein i from database
-		int score = gotohLinearSpace(newProt, prot, blosum); //compute its score
-		
-		pair<int, int> res (i, score);
-		results[i] = res; //store the score associated with protein 'i' in the results vector 
-		
-		if (i%1000 == 0) { //print progress
-			cout << begin << " " << i << endl;
-		}
-	}
-	
+	pair<int, int> res (protIndex, score);
+	results[protIndex] = res; //store the score associated with protein 'i' in the results vector 
 	
 }
 
@@ -164,53 +102,61 @@ void computeGotoh(Database & db, ScoreMatrix & blosum,  Protein & newProt, vecto
 int main(int argc, char* argv[]) {
 
 	//load the database
-	Database db = Database("uniprot_sprot/uniprot_sprot.fasta");
+	Database db = Database("uniprot_sprot_A/uniprot_sprot_A.fasta");
 	
 	cout << "Loading score matrix\n";
 	ScoreMatrix blosum = ScoreMatrix("BLOSUM62.txt");
 	
 	
+	
 	//load the protein to align
 	Protein newProt;
-	newProt.loadFromFile("P00533.fasta");
+	newProt.loadFromFile("P07327.fasta");
 	cout << "Protein to align : " << endl;
 	newProt.print();
+	
+	Protein prot0 = db.getProtein(0);
+	cout << "Protein 0 : " << endl;
+	prot0.print();
+	
+	if (newProt == prot0) 
+		cout << "Prot found\n";
+	
 		
 	//int score = gotohLinearSpace(newProt, prot, blosum);
 	//cout << "Score : " << score  << endl;
 	
-	
-	
-	
+	int res = 0;
+	for (int i = 0 ; i < newProt.size(); i++) {
+		res += blosum(newProt.getResidue(i), newProt.getResidue(i));
+	}
+	cout << "Score should be : " << res << " length : " << newProt.size() << endl;
 	
 	int nbrSequences = db.getNbrSequences();
-	
 	vector<pair<int, int>> results; //vector with the results of Gotoh algorithm : pair<index of protein in database, score>
 	results.resize(nbrSequences);
 	
 	int nbrThreads = thread::hardware_concurrency(); //get the number of hardware thread available on the machine
-	cout << "Running on " << nbrThreads << " threads\n";
+	cout << "Running with " << nbrThreads << " threads\n";
 	
-	vector<int> bnd = bounds(nbrThreads, nbrSequences);  //vector with indexes of proteins, we give the proteins between to indexes (bnd[i] and bnd[i+1]) to one thread
+	ThreadPool* pool = new ThreadPool(nbrThreads);
 	
-	thread * threads = new thread[nbrThreads]; //array that holds the threats
+	//giving jobs to the treadPool
+	cout << "nbr : "<< nbrSequences << endl << flush;
 	
-	//creating threads
-	for(int i = 0; i < nbrThreads; i++) {
-		threads[i] = thread(computeGotoh, ref(db), ref(blosum), ref(newProt), ref(results), bnd[i], bnd[i+1]);
-	} 
-	
-	//joining the threads (we wait that all threads are finished)
-	for(int i = 0; i < nbrThreads; i++) {
-		threads[i].join();
+	for (int i = 0; i < nbrSequences; i++) {
+		pool->addJob(bind(computeGotoh, ref(db), ref(blosum), ref(newProt), ref(results), i));
+		
 	}
 	
 	
+	delete pool;
+
 	sort(results.begin(), results.end(), [](pair<int, int> &left, pair<int, int> &right) {  //sort the vector of results based on score
 		return left.second > right.second;
 	});
 	
-	for (int i = 0; i < 10; i++) { // print the first sequence with highest score
+	for (int i = 0; i < 25; i++) { // print the first sequences with highest score
 		Protein & prot = db.getProtein(results[i].first); 
 		cout << "Score : " << results[i].second << " ";
 		prot.print("header");

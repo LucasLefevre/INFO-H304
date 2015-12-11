@@ -65,10 +65,9 @@ void Protein::loadFromFile(const string filename) {
 		int sequenceSize = seq.size();
 		length = sequenceSize;
 		sequence = new char[sequenceSize+1];
-		sequence[0] = 0;
-		for (int i = 1; i <= sequenceSize; i++) {
+		for (int i = 0; i <= sequenceSize; i++) {
 			//cout << seq[i-1] << " " ;
-			sequence[i] = coder.encode(seq[i-1]);
+			sequence[i] = coder.encode(seq[i]);
 		}
 			
 	}
@@ -94,7 +93,7 @@ string Protein::decode() {
 	
 	for (int i = 0; i < length; i++) {
 		decodedSequence += coder.decode(sequence[i]);
-		//cout <<  "|" << i;
+		//cout <<  "|" << hex << (int) sequence[i];
 	}
 	
 	return decodedSequence;

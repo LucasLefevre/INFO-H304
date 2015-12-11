@@ -111,14 +111,15 @@ void Database::loadProteins(const string &filename) {
 			
 			cout << "Loading proteins\n";
 	
-			//char firstByte[1];
-			//dbFile.read((char*) &firstByte, sizeof(firstByte));
+			
 			
 			int sequenceSize;
 			for (int i = 0; i <= nbrSequences-1 ; i++){  //nbrSequences + 1
 				
+				char firstByte[1];
+				dbFile.read((char*) &firstByte, sizeof(firstByte));
 				
-				sequenceSize = sequenceOffsets[i+1] - sequenceOffsets[i];
+				sequenceSize = sequenceOffsets[i+1] - sequenceOffsets[i] -1  ;
 				char* sequence = new char[sequenceSize];
 				dbFile.read(sequence, sequenceSize);
 				Protein * prot = new Protein();

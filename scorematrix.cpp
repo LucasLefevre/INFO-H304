@@ -11,8 +11,7 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 	ifstream file;
 	file.open(filename);
 	this->nbrCols = nbrCols;
-	cout << "size of matrix : " << nbrCols << "\n";
-	matrix.assign(27 * 27, -1000);
+	matrix.assign(nbrCols * nbrCols, -10000);  //fill the matrix with -10000
 	string line;
 	
 	CodeTable coder = CodeTable();
@@ -20,12 +19,11 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 	if (file.is_open()) {
 		
 		int value;
-		 
 		string residues = "";
 		int y = 0;
 		while (getline(file, line)) {
 			
-			if (line[0] == '#') {
+			if (line[0] == '#') { //ignore lines beginning with #
 				continue;
 			}
 			else if (line[0] == ' ') {
@@ -33,16 +31,14 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 				stringstream converter;
 				converter << &line[1];
 				
-				
 				char residue;
-				while (converter >> residue) {
+				while (converter >> residue) {  //get all possible residues in the matrix : AGTFCBNDSKE...
 					residues += residue;
 				}
 				continue;
 			}
 			int x = 0;
 			
-
 			stringstream converter;
 			converter << &line[1];
 			while (converter >> value){
@@ -53,14 +49,11 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 					int residue_y = coder.encode(residues[y]); 
 					
 					this->operator()(residue_x, residue_y) = (int) value;
-
 					x++;
 				}
-				
 			}
 			++y;
 		}
-		
 	}
 	else {
 		cout << "Unable to load score matrix file : " << filename << endl;

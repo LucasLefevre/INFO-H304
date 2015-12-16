@@ -7,92 +7,65 @@ ThreadPool::ThreadPool() {
 }
 
 ThreadPool::ThreadPool(int nbrThreads) {
-	
+	/* Create a thread pool with nbrThreads threads
+	 */
+	 
 	shutdown = false;
 	threads.reserve(nbrThreads);
 	for (int i = 0; i < nbrThreads; i++) {
 		threads.emplace_back(std::bind(&ThreadPool::entry, this, i));
 	}
-	
-	
 }
 
 
 ThreadPool::~ThreadPool() {
-	
+	/* Wait until all threads have finished their jobs. 
+	 * When finished, delete all threads.
+	 */
 	{
 		cout << "deleting pool" << flush << endl;
 		unique_lock <std::mutex> loc(queueLock);
 		shutdown = true;
-		
 	}
-	
 	condVar.notify_all();
 	
 	for (auto & thread : threads) {
 		thread.join(); //wait all threads 
 	}
-	
-}
-
-void ThreadPool::wait() {
-	
-	for (auto & thread : threads) {
-		thread.join(); //wait all threads 
-	}
-}
-
-void ThreadPool::stop() {
-	unique_lock <std::mutex> loc(queueLock);
-	shutdown = true;
-	condVar.notify_all();
 }
 
 void ThreadPool::addJob(function <void(void)> func) {
-	
-	
+	/* Add a job to the queue
+	 */
 	{
-		//cout << "add job\n" << flush;
-		unique_lock <mutex> lock(queueLock);
+		unique_lock <mutex> lock(queueLock); //lock the jobs vector
 		jobs.push_back(func);
 	}
 	condVar.notify_one();
-	
-	//cout << jobs.size() <<endl;
-	
 }
 
 void ThreadPool::entry(int i) {
-	
+	/*
+	 * Main fonction for the threads. This is where they are executing their jobs
+	 * Infinite loop until there is no jobs or we want to shutdown
+	 */
 	function <void (void)> job;
 	
 	while(true) {
 		{
-			unique_lock<mutex> lock(queueLock);
-			//cout << "while\n" << flush;
+			unique_lock<mutex> lock(queueLock); //lock the jobs vector
 			
-			//cout << shutdown << endl << flush;
 			if (shutdown && jobs.empty()) {
-				
-				cout << "Thread " << i << " has terminated\n";
-				return ;
+				return ; //if no job available and we want to shutdown : leave the infinite loop
 			}
-			
-			
+		
 			while (!shutdown && jobs.empty()) { //if no jobs available and it doesn't have to shutdown -> wait
 				condVar.wait(lock);
 			}
+			job = jobs.front();  //pick the first job
+			jobs.pop_front(); //remove the first job from vector
 			
-			
-			
-			//cout << "Thread " << i << endl;
-			job = jobs.front();
-			jobs.pop_front();
-			
-			/*if (jobs.size() > 36900 || jobs.size() < 20) {
-				cout << "size : " << jobs.size() <<endl;
-			}*/
-		}
+		} //unlock the jobs vector
 		
 		job(); //all locks are removed when doing the job
 	}

@@ -73,6 +73,7 @@ void Protein::loadFromFile(const string filename) {
 	}
 	else {
 		cout << "Unable to open file : " << filename << "\n";
+		throw string("Unable to load file");
 	}
 }
 

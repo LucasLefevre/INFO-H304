@@ -94,7 +94,12 @@ void Database::loadHeader(const string &filename) {
 		
 		
 	}
-	else cout << "Unable to open database file : " << filename << ".pin\n";
+	else {
+		cout << "Unable to open database file : " << filename << ".pin\n";
+		throw string("Unable to load file");
+	}
+		
+	
 }
 
 void Database::loadProteins(const string &filename) {

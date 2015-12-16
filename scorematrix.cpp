@@ -63,7 +63,8 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 		
 	}
 	else {
-		cout << "Unable to load score matrix file : " << filename << "\n";
+		cout << "Unable to load score matrix file : " << filename << endl;
+		throw string("Unable to load score matrix file");
 	}
 	
 }

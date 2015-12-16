@@ -1,5 +1,5 @@
 all : database.o protein.o scorematrix.o codeTable.o threadpool.o main.cpp 
-	g++ -std=c++11 -pthread database.o protein.o threadpool.o codeTable.o scorematrix.o main.cpp -o proj
+	g++ -std=c++11 -pthread database.o protein.o threadpool.o codeTable.o scorematrix.o main.cpp -o gotoh
 	
 database.o : database.cpp protein.h
 	g++ -std=c++11 -c database.cpp

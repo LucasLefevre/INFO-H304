@@ -1,7 +1,9 @@
 #include "codeTable.h"
 
 CodeTable::CodeTable() {
-	
+	/*
+	 * Hardcoded BLAST table
+	 */
 	
 	decodeTable[0] = '-';
 	decodeTable[1] = 'A';
@@ -59,13 +61,11 @@ CodeTable::CodeTable() {
 	encodeTable['X'] = 21;
 	encodeTable['Y'] = 22;
 	encodeTable['Z'] = 23;
-	encodeTable['*'] = 25;
-	
-	
+	encodeTable['*'] = 25;	
 }
 
 unsigned int CodeTable::encode(char c) {
-		return encodeTable[c];
+	return encodeTable[c];
 }
 
 char CodeTable::decode(unsigned int i) {

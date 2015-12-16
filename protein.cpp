@@ -23,7 +23,6 @@ Protein::~Protein() {}
 void Protein::setSequence(char* sequence, int length) {
 	this->length = length;
 	this->sequence = sequence;
-	
 }
 
 const char Protein::getResidue(int i) const {
@@ -35,11 +34,9 @@ void Protein::loadFromFile(const string filename) {
 	ifstream file;
 	file.open(filename);
 	
-	CodeTable coder = CodeTable();
+	CodeTable coder = CodeTable();  //blast code table
 	string seq;
 	string line;
-	
-	
 	
 	if (file.is_open()) {
 		
@@ -54,22 +51,17 @@ void Protein::loadFromFile(const string filename) {
 				converter << &line[0];
 				char value;
 				while (converter >> value){
-					
 					seq += value;
 				}
 			}
 		}
 		
-		//cout << seq << endl << flush;
-		
 		int sequenceSize = seq.size();
 		length = sequenceSize;
 		sequence = new char[sequenceSize+1];
 		for (int i = 0; i <= sequenceSize; i++) {
-			//cout << seq[i-1] << " " ;
 			sequence[i] = coder.encode(seq[i]);
 		}
-			
 	}
 	else {
 		cout << "Unable to open file : " << filename << "\n";
@@ -89,7 +81,6 @@ string Protein::decode() {
 	//return a sequence string in readable format (letters instead of binary)
 	
 	CodeTable coder = CodeTable();
-	
 	string decodedSequence = "";
 	
 	for (int i = 0; i < length; i++) {
@@ -106,22 +97,29 @@ bool Protein::operator==(Protein const & a) {
 	return sequence == a.getSequence();
 }
 
-
 void Protein::print(string w, ostream& out) {
+	/*
+	 * Print a protein.  Print only the header, the sequence or both 
+	 * based on the parameter w
+	 */
 	
-	
-	if (w == "header" && !header.empty()) {
-		out << ">" << header << "\n";
+	if (w == "header" && !header.empty()) { //only print the header
+		
+		if (header[0] != '>') { //if there is already a >, don't print another !
+			out << ">";
+		}
+		out << header << "\n";
 	}
-	else if (w == "sequence") {
+	else if (w == "sequence") { //only print the sequence
 		out << decode() << "\n";
 	}
-	else {
-		out << ">" << header << "\n";
+	else {  // print the header and the sequence
+		if (header[0] != '>') {
+			out << ">";
+		}
+		out << header << "\n";
 		out << decode() << "\n";
 	}
-	
-	
 }
 
 const int Protein::size() const {

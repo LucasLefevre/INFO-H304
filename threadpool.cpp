@@ -23,7 +23,6 @@ ThreadPool::~ThreadPool() {
 	 * When finished, delete all threads.
 	 */
 	{
-		cout << "deleting pool" << flush << endl;
 		unique_lock <std::mutex> loc(queueLock);
 		shutdown = true;
 	}

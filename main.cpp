@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <utility>
-#include <ctime>
+#include <time.h>
 
 
 using namespace std;
@@ -97,7 +97,8 @@ void computeGotoh(Database & db, ScoreMatrix & blosum,  Protein & newProt, vecto
 
 int main(int argc, char* argv[]) {
 
-	const clock_t begin_time = clock(); //remember the start time
+	time_t start, end; 
+	time(&start);
 	
 	if (argc < 3) {
 		cout << "Wrong number of argument\n";
@@ -168,7 +169,10 @@ int main(int argc, char* argv[]) {
 		prot.print("header");
 	}
 
+
+	time(&end);
+	double diff = difftime(end, start);
 	cout << endl;
-	cout << "Elapsed time : " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << "seconds\n";
+	cout << "Elapsed time : " << diff << " seconds\n";
 	return EXIT_SUCCESS;
 }

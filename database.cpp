@@ -136,8 +136,6 @@ void Database::loadHeaders(const string &filename) {
 		
 		if (dbFile.is_open()) {
 			
-			cout << "Loading headers\n";
-			
 			int headerSize;
 			for (int i = 0; i <= nbrSequences-1 ; i++){  
 				
@@ -145,7 +143,7 @@ void Database::loadHeaders(const string &filename) {
 				char header[headerSize];
 				dbFile.read((char*) &header, headerSize);
 				
-				proteins[i].setHeader(string(header).substr(7, string::npos));
+				proteins[i].setHeader(string(header).substr(8, string::npos));
 			}
 		}
 		else {
@@ -202,7 +200,9 @@ Protein & Database::getProtein(int index) {
 }
 
 void Database::printInfos(std::ostream & out) {
-	//out << " - Version : " <<  version << "\n";
+	
+	out << "Database informations :" << endl;
+	out << " - Version : " <<  version << "\n";
 	out << " - Type : " << type  << "\n";
 	//out << " - Title lenght : " << titleLength  << "\n";
 	out << " - Title : " << title << "\n";

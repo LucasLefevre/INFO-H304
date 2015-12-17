@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <utility>
+#include <ctime>
 
 
 using namespace std;
@@ -12,7 +13,6 @@ int max_four(int a, int b, int c, int d) {
 	//return the max of four integer
 	return max(max(a,b), max(c,d));
 }
-
 
 int gotoh(const Protein & newProt, const Protein & prot, ScoreMatrix & blosum,int R, int Q) {
 	
@@ -95,10 +95,10 @@ void computeGotoh(Database & db, ScoreMatrix & blosum,  Protein & newProt, vecto
 	
 }
 
-
 int main(int argc, char* argv[]) {
 
-
+	const clock_t begin_time = clock(); //remember the start time
+	
 	if (argc < 3) {
 		cout << "Wrong number of argument\n";
 		cout << "usage : gotoh <database> <protein> [blosum score matrix] \n";
@@ -113,6 +113,11 @@ int main(int argc, char* argv[]) {
 	//load the protein to align
 	Protein newProt;
 	newProt.loadFromFile(protPath); //"P07327.fasta"
+	cout << endl;
+	cout << endl;
+	cout << "Query protein :"<< endl;
+	newProt.print();
+	cout << endl;
 	
 	//loading blosum matrix
 	ScoreMatrix blosum = ScoreMatrix("BLOSUM62.txt");
@@ -142,6 +147,7 @@ int main(int argc, char* argv[]) {
 	
 	int nbrThreads = thread::hardware_concurrency(); //get the number of hardware thread available on the machine
 	cout << "Running with " << nbrThreads << " threads\n";
+	cout << endl;
 	
 	ThreadPool* pool = new ThreadPool(nbrThreads);  //create the thread pool
 	
@@ -162,6 +168,7 @@ int main(int argc, char* argv[]) {
 		prot.print("header");
 	}
 
-	return 0;
-
+	cout << endl;
+	cout << "Elapsed time : " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << "seconds\n";
+	return EXIT_SUCCESS;
 }

@@ -107,6 +107,9 @@ void Protein::print(string w, ostream& out) {
 		
 		if (header[0] != '>') { //if there is already a >, don't print another !
 			out << ">";
+			if (header[0] != 's') { //this is because of weird caracters at the begining (can't figure out why) -> solution : skip the 's' when reading the header
+				out << "s";
+			}
 		}
 		out << header << "\n";
 	}
@@ -116,6 +119,9 @@ void Protein::print(string w, ostream& out) {
 	else {  // print the header and the sequence
 		if (header[0] != '>') {
 			out << ">";
+			if (header[0] != 's') { //this is because of weird caracters at the begining (can't figure out why) -> solution : skip the 's' when reading the header
+				out << "s";
+			}
 		}
 		out << header << "\n";
 		out << decode() << "\n";

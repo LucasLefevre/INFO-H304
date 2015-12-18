@@ -79,7 +79,7 @@ void Database::loadHeader(const string &filename) {
 		
 		//sequence offset table
 		sequenceOffsets.reserve(nbrSequences+1); 	//fix the size of the vector
-		offsetB[4]; 							//the offset is get as 4 bytes before convert it into an integer
+		
 		for (int i = 0; i <= nbrSequences; i++) {
 			dbFile.read((char*) &offsetB, sizeof(offsetB));
 			sequenceOffsets.push_back(bytesToIntBigEndian(offsetB, 4)); //convert bytes and store them as integer
@@ -197,6 +197,7 @@ Protein & Database::getProtein(int index) {
 	if (index < nbrSequences) {
 		return proteins[index];
 	}
+	return proteins[nbrSequences-1]; //if index not valid, return last protein
 }
 
 void Database::printInfos(std::ostream & out) {

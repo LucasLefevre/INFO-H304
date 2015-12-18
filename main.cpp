@@ -14,7 +14,7 @@ int max_four(int a, int b, int c, int d) {
 	return max(max(a,b), max(c,d));
 }
 
-int gotoh(const Protein & newProt, const Protein & prot, ScoreMatrix & blosum,int R, int Q) {
+int gotoh(const Protein & newProt, const Protein & prot, ScoreMatrix & blosum, int R, int Q) {
 	
 	// R : extension gap penalty
 	// Q : sum of open gap penalty and extension gap penalty
@@ -22,7 +22,7 @@ int gotoh(const Protein & newProt, const Protein & prot, ScoreMatrix & blosum,in
 	unsigned int n; //length of the shortest sequence
 	unsigned int m; //length of the second sequence
 	
-	//choosing the shortest sequence
+	//choosing the shortest sequence to make the vectors sizes the shortest possible.
 	const unsigned int newProtSize = newProt.size();
 	const unsigned int protSize = prot.size();
 	Protein shorterProt;
@@ -43,24 +43,22 @@ int gotoh(const Protein & newProt, const Protein & prot, ScoreMatrix & blosum,in
 	int H[n+1];
 	int F[n+1];
 	
-	
 	int H_diag;
 	int H_diag_temp;
 	int E;
-	
 	int score = 0;
 	
-	for (int j = 0; j <= n; j++) {
+	for (unsigned int j = 0; j <= n; j++) {
 		H[j] = 0;
 		F[j] = 0;
 	}
 	
-	for (int i = 1; i <= m; i++) { //line
+	for (unsigned int i = 1; i <= m; i++) { //line
 		
 		E = 0;
 		H_diag = 0;
 		
-		for (int j = 1; j <= n; j++) { //column
+		for (unsigned int j = 1; j <= n; j++) { //column
 		
 			E = max(H[j-1] - Q,  E - R);  
 			F[j] = max(H[j] - Q, F[j] - R);
@@ -75,7 +73,6 @@ int gotoh(const Protein & newProt, const Protein & prot, ScoreMatrix & blosum,in
 				score = H[j];
 		}
 	}
-	
 	return score;
 }
 
@@ -83,16 +80,16 @@ void computeGotoh(Database & db, ScoreMatrix & blosum,  Protein & newProt, vecto
 	// R : extension gap penalty
 	// Q : sum of open gap penalty and extension gap penalty
 	
-	if (protIndex % 1000 == 0) {
+	//debug : print current state
+	/*if (protIndex % 1000 == 0) {
 		cout << "Computing score for protein : " << protIndex << endl;
-	}
+	}*/
 	
 	Protein & prot = db.getProtein(protIndex); //get protein i from database
 	int score = gotoh(newProt, prot, blosum, R, Q); //compute its score
 	
 	pair<int, int> res (protIndex, score);
 	results[protIndex] = res; //store the score associated with protein 'i' in the results vector 
-	
 }
 
 int main(int argc, char* argv[]) {
@@ -102,7 +99,7 @@ int main(int argc, char* argv[]) {
 	
 	if (argc < 3) {
 		cout << "Wrong number of argument\n";
-		cout << "usage : gotoh <database> <protein> [blosum score matrix] \n";
+		cout << "usage : gotoh <database> <protein> [blosum score matrix] [open gap penalty] [extension gap penalty] \n";
 		return EXIT_FAILURE;
 	}
 	char * dbPath = argv[1];
@@ -115,32 +112,35 @@ int main(int argc, char* argv[]) {
 	Protein newProt;
 	newProt.loadFromFile(protPath); //"P07327.fasta"
 	cout << endl;
-	cout << endl;
 	cout << "Query protein :"<< endl;
 	newProt.print();
 	cout << endl;
 	
 	//loading blosum matrix
-	ScoreMatrix blosum = ScoreMatrix("BLOSUM62.txt");
+	string blosumPath = "BLOSUM62.txt"; //default score matrix
 	if (argc > 3) {
-		cout << "Loading score matrix\n";
-		char * blosumPath =argv[3]; 
-		blosum = ScoreMatrix(blosumPath);
+		blosumPath =argv[3]; 
 	}
+	ScoreMatrix blosum = ScoreMatrix(blosumPath);
 	
 	//OpenGapPenalty
-	int openGapPenalty = 11;
+	int openGapPenalty = 11; //default value
 	if (argc > 4) {
 		openGapPenalty = atoi(argv[4]);
 	}
 	
-	//OpenGapPenalty
-	int R = 1;
+	//extensionGapPenalty
+	int R = 1;  //default value
 	if (argc > 5) {
 		R = atoi(argv[5]);
 	}
 	
-	int Q = R + openGapPenalty;
+	cout << "Score matrix : " << blosumPath << endl;
+	cout << "Open gap penalty : " <<openGapPenalty << endl;
+	cout << "Extension gap penalty : " << R << endl;
+	cout << endl;
+	
+	int Q = R + openGapPenalty;  //this sum is used in Gotoh algorithm
 	
 	int nbrSequences = db.getNbrSequences();
 	vector<pair<int, int>> results; //vector with the results of Gotoh algorithm : pair<index of protein in database, score>

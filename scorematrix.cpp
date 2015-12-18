@@ -10,7 +10,7 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 	
 	ifstream file;
 	file.open(filename);
-	this->nbrCols = nbrCols;
+	this->nbrCols = nbrCols;  //default number of column  of a BLOSUM matrix is 27
 	matrix.assign(nbrCols * nbrCols, -10000);  //fill the matrix with -10000
 	string line;
 	
@@ -20,7 +20,7 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 		
 		int value;
 		string residues = "";
-		int y = 0;
+		unsigned int y = 0;
 		while (getline(file, line)) {
 			
 			if (line[0] == '#') { //ignore lines beginning with #
@@ -37,7 +37,7 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 				}
 				continue;
 			}
-			int x = 0;
+			unsigned int x = 0;
 			
 			stringstream converter;
 			converter << &line[1];
@@ -59,23 +59,18 @@ ScoreMatrix::ScoreMatrix(const string & filename, int nbrCols) {
 		cout << "Unable to load score matrix file : " << filename << endl;
 		throw string("Unable to load score matrix file");
 	}
-	
 }
 
 
 int & ScoreMatrix::operator()(char i, char j) {
 	//return element (i,j) of the matrix
-	
 	return matrix[nbrCols * i + j]; 
 }
 
 void ScoreMatrix::print() {
 	
-	int x; 
-	int y;
-	
 	string s;
-	for (int i = 0; i< matrix.size(); i++) {
+	for (unsigned int i = 0; i< matrix.size(); i++) {
 		if (i % nbrCols == 0) {
 			cout << endl;
 		}
